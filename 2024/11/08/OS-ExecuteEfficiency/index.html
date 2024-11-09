@@ -19,31 +19,22 @@
   <meta name="author" content="刘正">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Linux系统是如何收发网络包的？">
+    <meta name="description" content="本篇文章介绍了如何提升代码的执行效率">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Network-Linux">
-<meta property="og:url" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/index.html">
+<meta property="og:title" content="OS-ExecuteEfficiency">
+<meta property="og:url" content="https://lz2021211161.github.io/2024/11/08/OS-ExecuteEfficiency/index.html">
 <meta property="og:site_name" content="LZ&#39;s Blog">
-<meta property="og:description" content="Linux系统是如何收发网络包的？">
+<meta property="og:description" content="本篇文章介绍了如何提升代码的执行效率">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/OSI%E4%B8%8ETCP.png">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/580a887aab6af82ab03d7f00cd319ef8.jpeg">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/a8c0240dadeb0500d70168a8720d2062.png">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/8cee5dc1a59ed7dda2507d3231435c4f.png">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/3d77119f0badc8e410ab4762f6dc725a.png">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/c5a17700415024f2400fad5c33f08349.png">
-<meta property="og:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/%E6%94%B6%E5%8F%91%E6%B5%81%E7%A8%8B.png">
-<meta property="article:published_time" content="2024-11-08T08:39:43.000Z">
-<meta property="article:modified_time" content="2024-11-08T12:57:31.367Z">
+<meta property="article:published_time" content="2024-11-08T13:33:49.000Z">
+<meta property="article:modified_time" content="2024-11-09T07:24:42.239Z">
 <meta property="article:author" content="刘正">
-<meta property="article:tag" content="Network">
-<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://lz2021211161.github.io/2024/11/08/Network-Linux/OSI%E4%B8%8ETCP.png">
   
   
   
-  <title>Network-Linux - LZ&#39;s Blog</title>
+  <title>OS-ExecuteEfficiency - LZ&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -209,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Network-Linux"></span>
+            <span id="subtitle" data-typed-text="OS-ExecuteEfficiency"></span>
           
         </div>
 
@@ -220,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-08 16:39" pubdate>
-          2024年11月8日 下午
+        <time datetime="2024-11-08 21:33" pubdate>
+          2024年11月8日 晚上
         </time>
       </span>
     
@@ -232,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          2.6k 字
         
       </span>
     
@@ -243,7 +234,7 @@
         
         
         
-          20 分钟
+          22 分钟
         
       </span>
     
@@ -280,108 +271,73 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Network-Linux</h1>
+            <h1 id="seo-header">OS-ExecuteEfficiency</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Linux系统是如何收发网络包的？"><a href="#Linux系统是如何收发网络包的？" class="headerlink" title="Linux系统是如何收发网络包的？"></a>Linux系统是如何收发网络包的？</h1><h2 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h2><p>OSI网络模型共有七层，由国际标准化组织制定。但七层的分层过于复杂，故该模型一般只用于概念和理论，并没有实际的实现方案。</p>
-<p>常见的分层模型为TCP&#x2F;IP网络模型，共包含四层，分别是应用层、传输层、网络层和网络接口层，Linux系统同样也采用了TCP&#x2F;IP网络模型来实现协议栈。</p>
-<p>简要介绍一下TCP&#x2F;IP模型：</p>
-<ul>
-<li>应用层：负责向用户提供应用程序，如HTTP、DNS等</li>
-<li>传输层：负责端到端的通信，如TCP、UDP等</li>
-<li>网络层：负责网络包的封装、分片、路由、转发，如IP、ICMP等</li>
-<li>网络接口层：负责网络包在物理网络中的传输，如网络包的封帧、MAC寻址、差错校验以及通过网卡传输帧等</li>
-</ul>
-<p>TCP&#x2F;IP模型和OSI模型间各层的对应关系如下图：</p>
-<img src="/2024/11/08/Network-Linux/OSI%E4%B8%8ETCP.png" srcset="/img/loading.gif" lazyload class="" title="img">
+                <h1 id="如何提升代码的执行效率"><a href="#如何提升代码的执行效率" class="headerlink" title="如何提升代码的执行效率"></a>如何提升代码的执行效率</h1><h2 id="CPU-Cache"><a href="#CPU-Cache" class="headerlink" title="CPU Cache"></a>CPU Cache</h2><p>在之前的文章中，我们已经介绍了操作系统的分级内存体系，其中总结了不同的存储器的读写效率，以及CPU读写数据的方式。</p>
+<p>我们可以得知，如果代码中的数据能够直接从快速存储器中读取到，而不是要从遥远的硬盘逐级调入，则能够大幅提升代码的执行效率。</p>
+<p>要尝试利用好CPU Cache，我们首先要了解其内部结构及读写过程：</p>
+<p>CPU Cache是由很多Cache Line组成的，Cache  Line 是 CPU 从内存读取数据的基本单位，Cache Line 是由各种标志（Tag）+ 数据块（Data Block）组成，CPU Cache 的数据是从内存中读取过来的，它是以Cache Line 大小为单位读取数据的</p>
 
-<p>这里提一下常说的七层和四层负载均衡，指的是OSI七层模型中的应用层和传输层。</p>
-<blockquote>
-<p>负载均衡：通俗一点理解就是尽可能将网络流量平均分发到多个服务器上，以提高系统整体的响应速度和可用性。</p>
-<p>可以分为两类：硬件负载均衡和软件负载均衡</p>
-<ul>
-<li><p>硬件负载均衡：一般是在定制的处理器上运行独立负载均衡服务器，问题就是贵</p>
-</li>
-<li><p>软件负载均衡：从软件层面实现负载均衡，比较常见的是OSI模型中四层和七层的负载均衡。</p>
-<ul>
-<li><p>七层负载均衡：根据访问用户的HTTP请求头、URL信息将请求转发到特定的主机</p>
-<ul>
-<li><p>DNS重定向</p>
-<p>大型网站一般用DNS负载均衡作为第一级负载均衡手段，然后在内部使用其他方法做第二级负载均衡。</p>
-<p>DNS，域名解析服务，设计为一个树形结构的分布式应用，自上而下依次为：根域名服务器，一级域名服务器，二级域名服务器…本地域名服务器。</p>
-<p>DNS工作流程是一个逆向的递归流程，DNS客户端依次请求本地DNS服务器，上一级DNS服务器…根DNS服务器，一旦命中，再进行递归查询。为了减少查询次数，每一级DNS服务器都会设置DNS查询缓存。</p>
-<p>DNS负载均衡的原理就是：基于DNS查询缓存，按照负载情况返回不同服务器的IP地址。</p>
-<img src="/2024/11/08/Network-Linux/580a887aab6af82ab03d7f00cd319ef8.jpeg" srcset="/img/loading.gif" lazyload class="" title="img">
-</li>
-<li><p>HTTP重定向</p>
-<p>原理：根据用户的HTTP请求计算出真实的服务器地址，将该服务器地址写入HTTP重定向响应中，返回给浏览器，由浏览器进行访问</p>
-<img src="/2024/11/08/Network-Linux/a8c0240dadeb0500d70168a8720d2062.png" srcset="/img/loading.gif" lazyload class="" title="img">
-</li>
-<li><p>反向代理负载均衡</p>
-<p>是指以代理服务器来接受网络请求，然后将请求转发给内网中的服务器，并将从内网服务器上得到的结果返回给网络请求的客户端。</p>
-<p>正向代理：发生在客户端，是由用户主动发起的。翻墙软件是典型的正向代理，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</p>
-<p>反向代理：发生在服务端，用户请求时不知道代理的存在。</p>
-<img src="/2024/11/08/Network-Linux/8cee5dc1a59ed7dda2507d3231435c4f.png" srcset="/img/loading.gif" lazyload class="" title="img">
 
-<p>首先，在代理服务器上指定负载均衡规则。然后反向代理服务器会拦截指定域名或IP的请求，根据规则将请求分发到候选服务器上。要求候选服务器需要由容错机制（高可用方案），如主备模式，双主模式等</p>
-</li>
-</ul>
-</li>
-<li><p>四层负载均衡（基于IP地址和端口进行请求的转发）</p>
+<p>我们不妨假设L1 Cache Line 大小是 64 字节，也就意味着 <strong>L1 Cache 一次载入数据的大小是 64 字节</strong>。</p>
+<p>比如，有一个 <code>int array[100]</code> 的数组，当载入 <code>array[0]</code> 时，由于这个数组元素的大小在内存只占 4 字节，不足 64 字节，CPU 就会<strong>顺序加载</strong>数组元素到 <code>array[15]</code>，意味着 <code>array[0]~array[15]</code>数组元素都会被缓存在 CPU Cache 中了，因此当下次访问这些数组元素时，会直接从 CPU Cache 读取，而不用再从内存中读取，大大提高了 CPU 读取数据的性能。</p>
+<p>不同的映射逻辑决定了内存和CPU Cache 数据的对应关系，先来讲一下直接映射。</p>
+<p>前面，我们提到 CPU 访问内存数据时，是一小块一小块数据读取的，一般是64字节。在内存中，这一块的数据我们称为<strong>内存块（Block）</strong>，读取的时候我们要拿到数据所在内存块的地址。</p>
+<p>对于直接映射 Cache 采用的策略，就是把内存块的地址始终「映射」在一个 CPU Cache Line（缓存块） 的地址，至于映射关系实现方式，则是使用「取模运算」，取模运算的结果就是内存块地址对应的 CPU Cache Line（缓存块） 的地址。</p>
+<p>使用取模方式映射，会出现多个内存块对应同一个 CPU Cache Line上的情况。因此，为了区别不同的内存块，在对应的 CPU Cache Line 中我们还会存储一个<strong>组标记（Tag）</strong>。这个组标记会记录当前 CPU Cache Line 中存储的数据对应的内存块，我们可以用这个组标记来区分不同的内存块。</p>
+<p>除了组标记信息外，CPU Cache Line 还有两个信息：</p>
 <ul>
-<li><p>IP负载均衡</p>
-<p>是在网络层修改请求目的地址实现负载均衡</p>
-<img src="/2024/11/08/Network-Linux/3d77119f0badc8e410ab4762f6dc725a.png" srcset="/img/loading.gif" lazyload class="" title="img">
-</li>
-<li><p>MAC负载均衡</p>
-<p>指通过修改mac地址实现负载均衡</p>
-<img src="/2024/11/08/Network-Linux/c5a17700415024f2400fad5c33f08349.png" srcset="/img/loading.gif" lazyload class="" title="img"></li>
+<li>一个是，从内存加载过来的实际存放<strong>数据（Data）</strong>。</li>
+<li>另一个是，<strong>有效位（Valid bit）</strong>，它是用来标记对应的 CPU Cache Line  中的数据是否是有效的，如果有效位是 0，无论 CPU Cache Line 中是否有数据，CPU 都会直接访问内存，重新加载数据。</li>
 </ul>
-</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-<h2 id="Linux接收网络包的流程"><a href="#Linux接收网络包的流程" class="headerlink" title="Linux接收网络包的流程"></a>Linux接收网络包的流程</h2><p>网卡是计算机里的一个硬件，专门负责接收和发送网络包，当网卡接收到一个网络包后，会通过 DMA 技术，将网络包写入到指定的内存地址，也就是写入到 Ring Buffer ，这个是一个环形缓冲区，接着就会告诉操作系统这个网络包已经到达。</p>
-<p>这个告诉操作系统的操作可以通过中断来实现，但在高性能网络场景下，可能会频繁触发中断，影响系统处理效率。</p>
-<p>所以为了解决频繁中断带来的性能开销，Linux 内核在 2.6 版本中引入了 <strong>NAPI 机制</strong>，它是混合「中断和轮询」的方式来接收网络包，它的核心概念就是<strong>不采用中断的方式读取数据</strong>，而是首先采用中断唤醒数据接收的服务程序，然后 <code>poll</code> 的方法来轮询数据。</p>
-<p>因此，当有网络包到达时，会通过 DMA 技术，将网络包写入到指定的内存地址，接着网卡向 CPU 发起硬件中断，当 CPU 收到硬件中断请求后，根据中断表，调用已经注册的中断处理函数。</p>
-<p>硬件中断处理函数会做如下的事情：</p>
-<ul>
-<li>需要先「暂时屏蔽中断」，表示已经知道内存中有数据了，告诉网卡下次再收到数据包直接写内存就可以了，不要再通知 CPU 了，这样可以提高效率，避免 CPU 不停的被中断。</li>
-<li>接着，发起「软中断」，然后恢复刚才屏蔽的中断。</li>
-</ul>
-<p>硬件中断处理函数做的事情很少，主要耗时的工作都交给软中断处理函数了。</p>
-<p>内核中的 ksoftirqd 线程专门负责软中断的处理，当 ksoftirqd 内核线程收到软中断后，就会来轮询处理数据。</p>
-<p>ksoftirqd 线程会从 Ring Buffer 中获取一个数据帧，用 sk_buff 表示，从而可以作为一个网络包交给网络协议栈进行逐层处理。</p>
-<p>处理过程：</p>
-<ol>
-<li>网络接口层，会检查报文的合法性，若不合法则丢弃，合法会找到网络包的上层协议类型，如IPv4或IPv6，接着再去掉帧头和帧尾，交到网络层。</li>
-<li>取出IP包，判断网络包下一步的走向，比如是交给上层处理还是转发出去。当确认这个网络包要发送给本机后，就会从 IP 头里看看上一层协议的类型是 TCP 还是 UDP，接着去掉 IP 头，然后交给传输层。</li>
-<li>传输层，取出 TCP 头或 UDP 头，根据四元组「源 IP、源端口、目的 IP、目的端口」 作为标识，找出对应的 Socket，并把数据放到 Socket 的接收缓冲区。</li>
-<li>Socket，应用层程序调用 Socket 接口，将内核的 Socket 接收缓冲区的数据「拷贝」到应用层的缓冲区，然后唤醒用户进程。</li>
-</ol>
-<p>可以从下图左边部分看到网络包接收的流程，右边部分刚好反过来，它是网络包发送的流程。</p>
-<img src="/2024/11/08/Network-Linux/%E6%94%B6%E5%8F%91%E6%B5%81%E7%A8%8B.png" srcset="/img/loading.gif" lazyload class="" title="img">
+<p>CPU 在从 CPU Cache 读取数据的时候，并不是读取 CPU Cache Line 中的整个数据块，而是读取 CPU 所需要的一个数据片段，这样的数据统称为一个<strong>字（Word）</strong>。需要一个<strong>偏移量（Offset）</strong>来标识该读取的字在CPU Cache Line 中的位置。</p>
+<p>因此，一个内存的访问地址，包括<strong>组标记、CPU Cache Line 索引、偏移量</strong>这三种信息，于是 CPU 就能通过这些信息，在 CPU Cache 中找到缓存的数据。而对于 CPU Cache 里的数据结构，则是由<strong>索引 + 有效位 + 组标记 + 数据块</strong>组成。</p>
 
-<h2 id="Linux发送网络包的流程"><a href="#Linux发送网络包的流程" class="headerlink" title="Linux发送网络包的流程"></a>Linux发送网络包的流程</h2><p>整体流程可以见上图右侧，大概就是将接收流程反过来。</p>
-<p>有一些需要注意的点：</p>
-<ol>
-<li><p>应用程序调用Socket发送数据包的接口时，由于是系统调用，会陷入内核态。内核会申请一个内核态的 sk_buff 内存，<strong>将用户待发送的数据拷贝到 sk_buff 内存，并将其加入到发送缓冲区</strong>。</p>
-</li>
-<li><p>若传输层使用TCP协议，则不能直接取出sk_buff，而是要先拷贝一个sk_buff副本。是因为当网卡发送完后，会将sk_buff释放，但TCP支持丢失重传，所以在收到ACK前，sk_buff的内容应该能读取。</p>
-</li>
-<li><p>当完成对整个数据包的封装后，会触发「软中断」告诉网卡驱动程序，这里有新的网络包需要发送，驱动程序会从发送队列中读取 sk_buff，将这个 sk_buff 挂到 RingBuffer 中，接着将 sk_buff 数据映射到网卡可访问的内存 DMA 区域，最后完成真实的发送。当发送完成的时候，网卡设备会触发一个硬中断来释放内存，主要是释放 sk_buff 内存和清理 RingBuffer 内存。最后，当收到这个 TCP 报文的 ACK 应答时，传输层就会释放原始的 sk_buff 。</p>
-</li>
-</ol>
-<p>在发送网络数据的时候，涉及几次内存拷贝操作？</p>
-<ol>
-<li>调用发送数据的系统调用的时候，内核会申请一个内核态的 sk_buff 内存，将用户待发送的数据拷贝到 sk_buff 内存，并将其加入到发送缓冲区。</li>
-<li>在使用 TCP 传输协议的情况下，从传输层进入网络层的时候，每一个 sk_buff 都会被克隆一个新的副本出来。副本 sk_buff 会被送往网络层，等它发送完的时候就会释放掉，然后原始的 sk_buff 还保留在传输层，目的是为了实现 TCP 的可靠传输，等收到这个数据包的 ACK 时，才会释放原始的 sk_buff 。</li>
-<li>当 IP 层发现 sk_buff 大于 MTU 时才需要进行。会再申请额外的 sk_buff，并将原来的 sk_buff 拷贝为多个小的 sk_buff。</li>
-</ol>
+
+<p>全相联映射：</p>
+<p>将主存中的块号和块内容一起存在Cache Line 中，其中块地址存于 cache 行的标记(tag)部分中。这种带全部块地址一起保存的方法，可使主存的一个块直接复制到 cache 中的任意一行上，非常灵活。</p>
+<p>其检索过程为：将指令中的块号与Cache 中所有行的tag同时进行比较，若块号命中，则按偏移量从Cache 中读取指定字，若未命中，则按主存地址从主存中读取这个字。</p>
+
+
+<p>组相联映射：</p>
+<p>全相联映射和直接映射两种方式的优缺点正好相反。从存放位置的灵活性和命中率来看，前者为优；从比较器电路简单及硬件投资来说，后者为佳。而组相联映射方式是前两种方式的折中方案，它适度地兼顾了二者的优点又尽量避免二者的缺点，因此被普遍采用。</p>
+<p>在直接映射方式中，每个区第 <em>i</em> 块只能映射到 cache 唯一的第 <em>i</em> 行，冲突的概率可能会很大。而在组相联映射方式中，每个区第 <em>i</em> 块可以映射到第 <em>i</em> 组的 <em>v</em> 行中(图中 <em>v</em>&#x3D;2)，而且在 <em>v</em> 行中可以自由选择空余的行。</p>
+<p>当 CPU 给定一个内存地址访问 cache 时，首先用 <em>d</em> 位区内块号找到 cache 的相应组，然后将主存地址高 <em>s</em>–<em>d</em> 位区号部分与该组 <em>v</em> 行中的所有标记同时进行比较。哪行的标记与之相符，哪行即命中。此后再以内存地址的 <em>w</em> 位字地址部分检索此行的具体字，并完成所需要求的存取操作。如果此组没有一行的标记与之相符，即 cache 未命中，此时需按主存地址访问主存</p>
+
+
+
+
+<h2 id="如何写入让CPU效率更高的代码？"><a href="#如何写入让CPU效率更高的代码？" class="headerlink" title="如何写入让CPU效率更高的代码？"></a>如何写入让CPU效率更高的代码？</h2><p>了解了CPU Cache 的运行模式后，我们要回归主题，探究如何写出让CPU 处理效率更高的代码。</p>
+<p>关键的方法就是尽力增加<strong>缓存命中</strong>的概率。</p>
+<p>于是，「如何写出让 CPU 跑得更快的代码？」这个问题，可以改成「如何写出 CPU 缓存命中率高的代码？」。</p>
+<p> L1 Cache 分为「数据缓存」和「指令缓存」，这是因为 CPU 会分别处理数据和指令，比如 <code>1+1=2</code> 这个运算，<code>+</code> 就是指令，会被放在「指令缓存」中，而输入数字 <code>1</code> 则会被放在「数据缓存」里。</p>
+<p>因此，<strong>我们要分开来看「数据缓存」和「指令缓存」的缓存命中率</strong>。</p>
+<h3 id="如何提升数据缓存的命中率"><a href="#如何提升数据缓存的命中率" class="headerlink" title="如何提升数据缓存的命中率?"></a>如何提升数据缓存的命中率?</h3><p>对于如下两种遍历二维数组的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;N; i++) &#123;<br>    <span class="hljs-keyword">for</span> (j=<span class="hljs-number">0</span>; j&lt;N; j++) &#123;<br>        array[i][j] = <span class="hljs-number">0</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">for</span> (j=<span class="hljs-number">0</span>; j&lt;N; j++) &#123;<br>    <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;N; i++) &#123;<br>        array[j][i] = <span class="hljs-number">0</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>经过测试，形式一 <code>array[i][j]</code> 执行时间比形式二 <code>array[j][i]</code> 快好几倍。</p>
+<p>这种差距是由于在内存中二维数组的保存方式是以行连续的。当 CPU 访问 <code>array[0][0]</code> 时，由于该数据不在 Cache 中，于是会「顺序」把跟随其后的 3 个元素从内存中加载到 CPU Cache，这样当 CPU 访问后面的 3 个数组元素时，就能在 CPU Cache 中成功地找到数据，这意味着缓存命中率很高，缓存命中的数据不需要访问内存，这便大大提高了代码的性能。</p>
+<p>CPU一次从内存中加载到CPU Cache中的内容与CPU Cache Line 大小有关，可以在 Linux 里通过 <code>coherency_line_size</code> 配置查看 它的大小，通常是 64 个字节。</p>
+<p>那么当访问 <code>array[0][0]</code> 时，由于该元素不足 64 字节，于是就会往后<strong>顺序</strong>读取 <code>array[0][0]~array[0][15]</code> 到 CPU Cache 中。</p>
+<p><strong>因此，遇到这种遍历数组的情况时，按照内存布局顺序访问，将可以有效的利用</strong> <strong>CPU Cache 带来的好处，这样我们代码的性能就会得到很大的提升，</strong></p>
+<h3 id="如何提升指令缓存的命中率？"><a href="#如何提升指令缓存的命中率？" class="headerlink" title="如何提升指令缓存的命中率？"></a>如何提升指令缓存的命中率？</h3><p>对于如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-comment">// 1. 数组遍历</span><br><span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;N; i++) &#123;<br>    <span class="hljs-keyword">if</span> (array[i] &lt; <span class="hljs-number">50</span>)<br>        array[i] = <span class="hljs-number">0</span>;<br>&#125;<br><br><span class="hljs-comment">// 2. 数组排序</span><br>Arrays.sort(array);<br></code></pre></td></tr></table></figure>
+
+<p>是先遍历再排序速度快，还是先排序再遍历速度快呢？</p>
+<p>在回答这个问题之前，我们先了解 CPU 的<strong>分支预测器</strong>。对于 if 条件语句，意味着此时至少可以选择跳转到两段不同的指令执行，也就是 if 还是 else 中的指令。那么，<strong>如果分支预测可以预测到接下来要执行 if 里的指令，还是 else 指令的话，就可以「提前」把这些指令放在指令缓存中，这样 CPU 可以直接从 Cache 读取到指令，于是执行速度就会很快</strong>。</p>
+<p>因此，先排序再遍历速度会更快，这是因为排序之后，数字是从小到大的，那么前几次循环命中 <code>if &lt; 50</code> 的次数会比较多，于是分支预测就会缓存 <code>if</code> 里的 <code>array[i] = 0</code> 指令到 Cache 中，后续 CPU 执行该指令就只需要从 Cache 读取就好了。</p>
+<p>如果你肯定代码中的 <code>if</code> 中的表达式判断为 <code>true</code> 的概率比较高，我们可以使用显示分支预测工具，比如在 C&#x2F;C++ 语言中编译器提供了 <code>likely</code> 和 <code>unlikely</code> 这两种宏，如果 <code>if</code> 条件为 <code>ture</code> 的概率大，则可以用 <code>likely</code> 宏把 <code>if</code> 里的表达式包裹起来，反之用 <code>unlikely</code> 宏。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C"><span class="hljs-keyword">if</span> (likely(a == <span class="hljs-number">1</span>)) &#123;<br>    <span class="hljs-comment">// ...</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="如何提升多核CPU的缓存命中率？"><a href="#如何提升多核CPU的缓存命中率？" class="headerlink" title="如何提升多核CPU的缓存命中率？"></a>如何提升多核CPU的缓存命中率？</h3><p>在单核 CPU，虽然只能执行一个线程，但是操作系统给每个线程分配了一个时间片，时间片用完了，就调度下一个线程，于是各个线程就按时间片交替地占用 CPU，从宏观上看起来各个线程同时在执行。</p>
+<p>而现代 CPU 都是多核心的，线程可能在不同 CPU 核心来回切换执行，这对 CPU Cache 不是有利的，虽然 L3 Cache 是多核心之间共享的，但是 L1 和 L2 Cache 都是每个核心独有的，<strong>如果一个线程在不同核心来回切换，各个核心的缓存命中率就会受到影响</strong>，相反如果线程都在同一个核心上执行，那么其数据的 L1 和 L2 Cache 的缓存命中率可以得到有效提高，缓存命中率高就意味着 CPU 可以减少访问内存的频率。</p>
+<p>当有多个同时执行「计算密集型」的线程，为了防止因为切换到不同的核心，而导致缓存命中率下降的问题，我们可以把<strong>线程绑定在某一个 CPU 核心上</strong></p>
+<p>在 Linux 上提供了 <code>sched_setaffinity</code> 方法，来实现将线程绑定到某个 CPU 核心这一功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs Linux">#define _GNU_SOURCE<br>#include &lt;Sched.h&gt;<br><br>int sched_setaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask);<br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -400,7 +356,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Network/" class="category-chain-item">Network</a>
+  <a href="/categories/OS/" class="category-chain-item">OS</a>
   
   
 
@@ -415,9 +371,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Network/" class="print-no-link">#Network</a>
-      
-        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+        <a href="/tags/OS/" class="print-no-link">#OS</a>
       
     </div>
   
@@ -429,8 +383,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Network-Linux</div>
-      <div>https://lz2021211161.github.io/2024/11/08/Network-Linux/</div>
+      <div>OS-ExecuteEfficiency</div>
+      <div>https://lz2021211161.github.io/2024/11/08/OS-ExecuteEfficiency/</div>
     </div>
     <div class="license-meta">
       
@@ -474,18 +428,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/08/OS-ExecuteEfficiency/" title="OS-ExecuteEfficiency">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">OS-ExecuteEfficiency</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/11/06/OS-Memory/" title="OS-Memory">
-                        <span class="hidden-mobile">OS-Memory</span>
+                      <a href="/2024/11/08/Network-Linux/" title="Network-Linux">
+                        <span class="hidden-mobile">Network-Linux</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
